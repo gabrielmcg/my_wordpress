@@ -14,7 +14,7 @@ http://ip172-18-0-7-*************-8000.direct.labs.play-with-docker.com/wp-admin
 docker ps -qf "name=mywordpress_wordpress_1"
 
 docker exec -it mywordpress_wordpress_1 /bin/bash
-``
+```
 
 
 ```
