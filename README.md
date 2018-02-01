@@ -30,6 +30,11 @@ http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/
 
 
 
+```
+apt-get update
+apt-get install vim
+```
+
 
 
 
@@ -73,14 +78,28 @@ root@fc2cdbcc8d6a:/var/www/html#
 
 To enable this option you’ll need to edit your .htaccess file adding the follow
 
+vi .htaccess
+
 ```
 RewriteEngine on
+
+
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
+
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+```
+
+vi wp-config.php
+
+```
+define('JWT_AUTH_SECRET_KEY', 'your-top-secrect-key');
+define('JWT_AUTH_CORS_ENABLE', true);
 ```
 
 
-vi .htaccess
+
+
 
 
 
