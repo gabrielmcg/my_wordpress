@@ -169,14 +169,15 @@ VOLUME /var/www/html
 
 
 http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/wp-json
-
+```
 {"name":"My WordPress","description":"Just another WordPress site","url":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com","home":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com","gmt_offset":"0","timezone_string":"","namespaces":["oembed\/1.0","jwt-auth\/v1","wp\/v2"],"authentication":[],"routes":{"\/":{"namespace":"","methods":["GET"],"endpoints":[{"methods":["GET"],"args":{"context":{"required":false,"default":"view"}}}],"_links":{"self":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com\/wp-json\/"}},"\/oembed\/1.0":{"namespace":"oembed\/1.0","methods":["GET"],
-
+```
 
 
 http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/wp-json/wp/v2/posts
-
+```
 [{"id":1,"date":"2018-02-01T22:20:10","date_gmt":"2018-02-01T22:20:10","guid":{"rendered":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com\/?p=1"},"modified":"2018-02-01T22:20:10","modified_gmt":"2018-02-01T22:20:10","slug":"hello-world","status":"publish","type":"post","link":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com\/2018\/02\/01\/hello-world\/","title":{"rendered":"Hello world!"},"content":{"rendered":"<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!<\/p>\n","protected":false},"excerpt":{"rendered":"<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!
+```
     
     
     
