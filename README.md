@@ -97,9 +97,69 @@ define('JWT_AUTH_SECRET_KEY', 'your-top-secrect-key');
 define('JWT_AUTH_CORS_ENABLE', true);
 ```
 
+exit
 
 
 
+```
+docker volume ls
+DRIVER              VOLUME NAME
+local               fe191a97abe319fba338b2b8898b219d41973a1f0d0080c1570e326ecf4663bb
+local               mywordpress_db_data
+[node1] (local) root@192.168.0.158 ~/my_wordpress
+
+
+
+[node1] (local) root@192.168.0.158 ~/my_wordpress
+$ docker volume inspect fe191a97abe319fba338b2b8898b219d41973a1f0d0080c1570e326ecf4663bb
+[
+    {
+        "CreatedAt": "2018-02-01T23:08:02Z",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/fe191a97abe319fba338b2b8898b219d41973a1f0d0080c1570e326ecf4663bb/_data",
+        "Name": "fe191a97abe319fba338b2b8898b219d41973a1f0d0080c1570e326ecf4663bb",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+[node1] (local) root@192.168.0.158 ~/my_wordpress
+```
+
+```
+node1] (local) root@192.168.0.158 ~/my_wordpress
+$ docker-compose stop
+Stopping mywordpress_wordpress_1 ... done
+Stopping mywordpress_db_1        ... done
+[node1] (local) root@192.168.0.158 ~/my_wordpress
+$ docker-compose up -d
+Starting mywordpress_db_1 ... done
+Starting mywordpress_wordpress_1 ... done
+[node1] (local) root@192.168.0.158 ~/my_wordpress
+$ docker exec -it mywordpress_wordpress_1 /bin/bash
+root@fc2cdbcc8d6a:/var/www/html# ls
+index.php    wp-activate.php     wp-comments-post.php  wp-content   wp-links-opml.php  wp-mail.php      wp-trackback.php
+license.txt  wp-admin            wp-config-sample.php  wp-cron.php  wp-load.php        wp-settings.php  xmlrpc.php
+readme.html  wp-blog-header.php  wp-config.php         wp-includes  wp-login.php       wp-signup.php
+root@fc2cdbcc8d6a:/var/www/html# more .htaccess
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
+
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+</IfModule>
+
+# END WordPress
+```
 
 
 
