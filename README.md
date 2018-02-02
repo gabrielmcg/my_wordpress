@@ -7,14 +7,24 @@ git clone https://github.com/gabrielmcg/my_wordpress.git
 cd my_wordpress
 
 docker-compose up -d
+```
 
-
+Install wordpress
+```
 http://ip172-18-0-7-*************-8000.direct.labs.play-with-docker.com/wp-admin/install.php
 
-docker ps -qf "name=mywordpress_wordpress_1"
+title
+username
+password
+email adddress
 
-docker exec -it mywordpress_wordpress_1 /bin/bash
+login
+http://ip172-18-0-27-b9q65069a8q000dtudig-8000.direct.labs.play-with-docker.com/wp-login.php
 ```
+
+
+
+
 
 Search for JWT plug-in
 http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/wp-admin/plugin-install.php?s=jwt&tab=search&type=term
@@ -22,7 +32,7 @@ http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/
 Install JWT Authentication for WP REST API
 http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=jwt-authentication-for-wp-rest-api&TB_iframe=true&width=600&height=550
 
-Activate
+*Activate*
 http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/wp-admin/plugins.php?_wpnonce=be9e0fbde6&action=activate&plugin=jwt-authentication-for-wp-rest-api/jwt-auth.php
 
 View Details
@@ -30,12 +40,13 @@ http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/
 
 
 
-```
-apt-get update
-apt-get install vim
-```
 
 
+```
+docker ps -qf "name=mywordpress_wordpress_1"
+
+docker exec -it mywordpress_wordpress_1 /bin/bash
+```
 
 
 ```
@@ -72,30 +83,78 @@ drwxr-xr-x 18 www-data www-data  8192 Jan 16 21:39 wp-includes
 -rw-r--r--  1 www-data www-data  4620 Oct 23 22:12 wp-trackback.php
 -rw-r--r--  1 www-data www-data  3065 Aug 31  2016 xmlrpc.php
 root@fc2cdbcc8d6a:/var/www/html#
+```
 
 
 ```
+apt-get update
+apt-get install vim
+```
 
-To enable this option you’ll need to edit your .htaccess file adding the follow
 
-vi .htaccess
+
+
+
+more .htaccess
 
 ```
-RewriteEngine on
+root@5adc051a3c34:/var/www/html# more .htaccess
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+root@5adc051a3c34:/var/www/html#
+```
 
 
+Use sed:
+
+need to escape / in </IfModule>
+```
+sed -i '/<\/IfModule>/i \
+RewriteCond %{HTTP:Authorization} ^(.*) \
+RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1] \
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1' \
+.htaccess
+```
+
+
+more .htaccess
+```
+root@5adc051a3c34:/var/www/html# more .htaccess
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
-
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+</IfModule>
+# END WordPress
+root@5adc051a3c34:/var/www/html#
 ```
 
-vi wp-config.php
+
+sed wp-config.php  - need to escape single quote!
 
 ```
-define('JWT_AUTH_SECRET_KEY', 'your-top-secrect-key');
-define('JWT_AUTH_CORS_ENABLE', true);
+sed -i '/define('"'"'NONCE_SALT'"'"'/a \
+define('"'"'JWT_AUTH_SECRET_KEY'"'"', '"'"'your-top-secrect-key'"'"'); \
+define('"'"'JWT_AUTH_CORS_ENABLE'"'"', true);' \
+wp-config.php
 ```
+
+
 
 exit
 
@@ -126,16 +185,29 @@ $ docker volume inspect fe191a97abe319fba338b2b8898b219d41973a1f0d0080c1570e326e
 [node1] (local) root@192.168.0.158 ~/my_wordpress
 ```
 
+
+
+docker-compose stop
 ```
 node1] (local) root@192.168.0.158 ~/my_wordpress
 $ docker-compose stop
 Stopping mywordpress_wordpress_1 ... done
 Stopping mywordpress_db_1        ... done
 [node1] (local) root@192.168.0.158 ~/my_wordpress
+```
+
+
+
+docker-compose up -d
+```
 $ docker-compose up -d
 Starting mywordpress_db_1 ... done
 Starting mywordpress_wordpress_1 ... done
 [node1] (local) root@192.168.0.158 ~/my_wordpress
+```
+
+check that changes have survived restart
+```
 $ docker exec -it mywordpress_wordpress_1 /bin/bash
 root@fc2cdbcc8d6a:/var/www/html# ls
 index.php    wp-activate.php     wp-comments-post.php  wp-content   wp-links-opml.php  wp-mail.php      wp-trackback.php
@@ -150,19 +222,15 @@ RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.php [L]
-
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
-
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
-
 </IfModule>
-
 # END WordPress
 ```
 
 
-The files are stored in a VOLUME inn Dockerfile, so survive restart:
+The files are stored in a VOLUME in Dockerfile, so they survive a restart:
 
 VOLUME /var/www/html
 
@@ -178,6 +246,7 @@ http://ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com/
 ```
 [{"id":1,"date":"2018-02-01T22:20:10","date_gmt":"2018-02-01T22:20:10","guid":{"rendered":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com\/?p=1"},"modified":"2018-02-01T22:20:10","modified_gmt":"2018-02-01T22:20:10","slug":"hello-world","status":"publish","type":"post","link":"http:\/\/ip172-18-0-25-b9pp4c2r91k000b18afg-8000.direct.labs.play-with-docker.com\/2018\/02\/01\/hello-world\/","title":{"rendered":"Hello world!"},"content":{"rendered":"<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!<\/p>\n","protected":false},"excerpt":{"rendered":"<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!
 ```
+    
     
     
     
